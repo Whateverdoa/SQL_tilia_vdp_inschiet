@@ -35,3 +35,20 @@ if __name__ == '__main__':
     print(pad1.is_file())
     print(pad2.make_dataframe().head())
     ddf_fiel = pad2.make_dataframe()
+
+    # todo veel voud en rename columns voor df naar csv
+
+    voor_df_naar_csv = pd.DataFrame([row for row in ddf_fiel.itertuples() for x in range(row.aantal_rollen)])
+
+    # rename columns
+    col_dict = {'aantal_per_rol': 'aantal', 'ClientOrderNo': 'Artnr'}  ## key→old name, value→new name
+
+    voor_df_naar_csv.columns = [col_dict.get(x, x) for x in voor_df_naar_csv.columns]
+    headerlist = ["omschrijving", "sluitbarcode", 'Colorcode','sluitetiket']
+
+    n = voor_df_naar_csv.reindex(columns=[*voor_df_naar_csv.columns.tolist(), *headerlist], fill_value="")
+
+    n['beeld'] = n['itemnummer'].apply(lambda x: str(x)+".pdf")
+    n.to_string()
+
+    n.astype(str).to_excel("rond45_df_naar_csv.xlsx",columns=["omschrijving", "sluitbarcode", 'Colorcode','sluitetiket', 'beeld','aantal'])
